@@ -1,5 +1,7 @@
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from '@/components/ui/table';
 import {QuoteResponse} from "../_utils/definitions";
+import {Link} from 'lucide-react';
+import {Badge} from "@/components/ui/badge";
 
 // ----- Quotes Section Component ----- //
 function QuotesSection({quotes, error}: { quotes: QuoteResponse[]; error: string | null }) {
@@ -30,7 +32,13 @@ function QuotesSection({quotes, error}: { quotes: QuoteResponse[]; error: string
                     {quotes.length > 0 ? (
                         quotes.map((quote) => (
                             <TableRow key={quote.symbol} className="hover:bg-muted/50">
-                                <TableCell className="font-bold text-primary">{quote.symbol}</TableCell>
+                                <TableCell className="font-bold text-primary">
+                                    <Link href={`/assets/${quote.symbol}`}>
+                                        <Badge className="bg-primary/10 cursor-pointer" variant="outline">
+                                            {quote.symbol}
+                                        </Badge>
+                                    </Link>
+                                </TableCell>
                                 <TableCell className="max-w-[150px] truncate" title={quote.shortName || 'N/A'}>
                                     {quote.shortName || 'N/A'}
                                 </TableCell>
