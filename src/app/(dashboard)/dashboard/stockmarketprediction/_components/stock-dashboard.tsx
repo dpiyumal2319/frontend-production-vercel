@@ -15,9 +15,9 @@ import StockDataTable from "./stock-data-table"
 import ModelMetadata from "./model-metadata"
 //import {getStockData, getPredictionData, getModelMetadata} from "@/lib/data"
 import {exportToCSV} from "@/lib/export"
+import {BACKEND_BASE_URL} from "@/lib/const"
 import {PredictionData, StockData, ModelMetadataType} from "@/lib/types/stock_prediction";
 import AxiosInstance from "@/lib/client-fetcher";
-import {AxiosError} from "axios";
 // import { number } from "zod"
 
 type companyType = {
@@ -34,6 +34,7 @@ const formatDate = (date: Date) => {
     return date.toLocaleDateString("en-CA"); // "YYYY-MM-DD" format
 };
 
+const BASE_URL = BACKEND_BASE_URL
 
 export default function StockDashboard() {
     const [selectedCompany, setSelectedCompany] = useState<string>("")
@@ -58,7 +59,7 @@ export default function StockDashboard() {
         const fetchCompanies = async () => {
             try {
                 setIsLoading(true);
-                const response = await AxiosInstance.get(`/get-active-symbols`);
+                const response = await AxiosInstance.get(`${BASE_URL}/get-active-symbols`);
                 const data = response.data;
                 setCompanies(data.symbols);
                 setSelectedCompany(data.symbols[0].value);
@@ -79,35 +80,38 @@ export default function StockDashboard() {
         const fetchStockData = async () => {
             setPredicting(true); // Show loading popup
             try {
-                const response = await AxiosInstance.post(`/V2/get-predicted-prices`, {
-                    starting_date: formatDate(dateRange.from ?? new Date()),
-                    ending_date: formatDate(dateRange.to ?? new Date()),
-                    ticker_symbol: selectedCompany,
+                const response = await fetch(`${BASE_URL}/V2/get-predicted-prices`, {
+                    method: "POST",
+                    credentials: "include",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        starting_date: formatDate(dateRange.from ?? new Date()),
+                        ending_date: formatDate(dateRange.to ?? new Date()),
+                        ticker_symbol: selectedCompany,
+                    }),
                 });
-                const data = response.data;
-                setStockData(data.stockData);
-                setModelMetadata(data.modelMetadata);
-                setPredictionData(data.predictionData);
-                if (
-                    data.predictionData &&
-                    data.stockData &&
-                    data.stockData.history.length > 0 &&
-                    data.predictionData.predictions.length > 0
-                ) {
-                    const lastPrediction = data.predictionData.predictions[data.predictionData.predictions.length - 1].predicted;
-                    const lastPrice = data.stockData.history[data.stockData.history.length - 1].price;
-                    const percentageChange = ((lastPrediction - lastPrice) / lastPrice) * 100;
-                    setSevchange(percentageChange);
-                }
-            } catch (error) {
-                if (error instanceof AxiosError) {
-                    if (error.response && error.response.data && error.response.data.detail) {
-                        setDataerror(error.response.data.detail);
-                    } else {
-                        setDataerror("Resource not found");
+                if (response.ok) {
+                    const data = await response.json();
+                    setStockData(data.stockData);
+                    setModelMetadata(data.modelMetadata);
+                    setPredictionData(data.predictionData)
+                    if (data.predictionData && data.stockData && data.stockData.history.length > 0 && data.predictionData.predictions.length > 0) {
+                        const lastPrediction = data.predictionData.predictions[data.predictionData.predictions.length - 1].predicted;
+                        const lastPrice = data.stockData.history[data.stockData.history.length - 1].price;
+                        const percentageChange = ((lastPrediction - lastPrice) / lastPrice) * 100;
+                        setSevchange(percentageChange);
                     }
+
+                } else {
+                    const result = await response.json();
+                    setDataerror(result.detail || "Resource not found");
+                    return;
                 }
-                console.error("Error fetching stock data", error);
+
+            } catch {
+                console.error("Error fetching stock data");
             } finally {
                 setPredicting(false); // Hide loading popup
             }
