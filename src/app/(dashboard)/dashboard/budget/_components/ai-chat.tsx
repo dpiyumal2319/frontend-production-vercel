@@ -8,7 +8,7 @@ import {Input} from "@/components/ui/input"
 import {MessageCircle, X, Send, Bot, User} from "lucide-react"
 import {Avatar} from "@/components/ui/avatar"
 import MarkdownRenderer from "@/app/(dashboard)/dashboard/budget/_components/markdown_renderer"
-import {BudgetApi} from "@/lib/budget-lib/budget_api"
+import {chat} from "@/lib/budget-lib/budget_api"
 
 export function AIChat() {
     const [isOpen, setIsOpen] = useState(false)
@@ -38,7 +38,7 @@ export function AIChat() {
         setInput("")
 
         try {
-            const response = await BudgetApi.chat(input)
+            const response = await chat(input)
 
             const botMessage = {
                 role: "bot",

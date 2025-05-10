@@ -1,6 +1,6 @@
 "use client"
 
-import {useState, useEffect} from "react"
+import React, {useEffect, useState} from "react"
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card"
 import {Button} from "@/components/ui/button"
 import {Input} from "@/components/ui/input"
@@ -8,8 +8,14 @@ import {Label} from "@/components/ui/label"
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select"
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs"
 import {LineChart} from "./charts"
-import {BudgetApi} from "@/lib/budget-lib/budget_api"
-import {BudgetGoal, BudgetGoalCreate} from "@/lib/budget-lib/budget_api"
+import {
+    BudgetGoal,
+    BudgetGoalCreate,
+    createBudgetGoal,
+    deleteBudgetGoal,
+    getBudgetGoals,
+    updateBudgetGoal
+} from "@/lib/budget-lib/budget_api"
 import {
     Dialog,
     DialogContent,
@@ -46,7 +52,7 @@ export function BudgetGoals({userId}: BudgetGoalsProps) {
         const fetchGoals = async () => {
             try {
                 setLoading(true)
-                const data = await BudgetApi.getBudgetGoals(userId)
+                const data = await getBudgetGoals(userId)
                 const filtered = data.filter(g => g.title.startsWith("FALSE") || g.title.startsWith("TRUE"))
                 setGoals(filtered)
             } catch (err) {
@@ -57,7 +63,7 @@ export function BudgetGoals({userId}: BudgetGoalsProps) {
             }
         }
 
-        fetchGoals()
+        fetchGoals().then()
     }, [userId])
 
     const handleAddGoal = async (e: React.FormEvent) => {
@@ -76,8 +82,8 @@ export function BudgetGoals({userId}: BudgetGoalsProps) {
                 title: "FALSE:" + newGoal.title,
             }
 
-            await BudgetApi.createBudgetGoal(goalToCreate)
-            const goals = await BudgetApi.getBudgetGoals(userId)
+            await createBudgetGoal(goalToCreate)
+            const goals = await getBudgetGoals(userId)
             const filtered = goals.filter(g => g.title != "")
             setGoals(filtered)
             setGoals(goals)
@@ -103,7 +109,7 @@ export function BudgetGoals({userId}: BudgetGoalsProps) {
         if (!editingGoal) return
 
         try {
-            const updatedGoal = await BudgetApi.updateBudgetGoal(editingGoal.id, {
+            const updatedGoal = await updateBudgetGoal(editingGoal.id, {
                 title: editingGoal.title,
                 amount: editingGoal.amount,
                 deadline: editingGoal.deadline
@@ -120,7 +126,7 @@ export function BudgetGoals({userId}: BudgetGoalsProps) {
 
     const handleDeleteGoal = async (goalId: number) => {
         try {
-            await BudgetApi.deleteBudgetGoal(goalId)
+            await deleteBudgetGoal(goalId)
             setGoals(goals.filter(goal => goal.id !== goalId))
         } catch (err) {
             setError("Failed to delete goal")
@@ -130,7 +136,7 @@ export function BudgetGoals({userId}: BudgetGoalsProps) {
 
     const handleToggleStatus = async (goal: BudgetGoal) => {
         try {
-            await BudgetApi.updateBudgetGoal(goal.id, {
+            await updateBudgetGoal(goal.id, {
                 title: goal.title.split(":")[0] === "TRUE" ? "FALSE:" + goal.title.split(":")[1] : "TRUE:" + goal.title.split(":")[1],
                 amount: goal.amount,
                 deadline: goal.deadline
@@ -171,7 +177,7 @@ export function BudgetGoals({userId}: BudgetGoalsProps) {
                 <div className="flex flex-col items-center justify-center h-[70vh]">
                     <div
                         className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mb-4"></div>
-                    <p >Loading your budget goals...</p>
+                    <p>Loading your budget goals...</p>
                 </div>
 
             </div>
@@ -187,8 +193,8 @@ export function BudgetGoals({userId}: BudgetGoalsProps) {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <Card>
                     <CardHeader className="pb-2">
-                        <CardTitle >Active Goals</CardTitle>
-                        <CardDescription >Your financial targets</CardDescription>
+                        <CardTitle>Active Goals</CardTitle>
+                        <CardDescription>Your financial targets</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div
@@ -200,8 +206,8 @@ export function BudgetGoals({userId}: BudgetGoalsProps) {
                 </Card>
                 <Card>
                     <CardHeader className="pb-2">
-                        <CardTitle >Completed Goals</CardTitle>
-                        <CardDescription >Your financial targets</CardDescription>
+                        <CardTitle>Completed Goals</CardTitle>
+                        <CardDescription>Your financial targets</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div
@@ -224,8 +230,8 @@ export function BudgetGoals({userId}: BudgetGoalsProps) {
         </Card> */}
                 <Card>
                     <CardHeader className="pb-2">
-                        <CardTitle >Next Deadline</CardTitle>
-                        <CardDescription >Upcoming goal</CardDescription>
+                        <CardTitle>Next Deadline</CardTitle>
+                        <CardDescription>Upcoming goal</CardDescription>
                     </CardHeader>
                     <CardContent>
                         {nextDeadlineGoal ? (
@@ -238,7 +244,7 @@ export function BudgetGoals({userId}: BudgetGoalsProps) {
                                 </div>
                             </>
                         ) : (
-                            <div >No upcoming goals</div>
+                            <div>No upcoming goals</div>
                         )}
                     </CardContent>
                 </Card>
@@ -272,7 +278,7 @@ export function BudgetGoals({userId}: BudgetGoalsProps) {
                             <Card>
                                 <CardHeader>
                                     <CardTitle className="">No Goals Found</CardTitle>
-                                    <CardDescription >
+                                    <CardDescription>
                                         Create your first financial goal to get started
                                     </CardDescription>
                                 </CardHeader>
@@ -355,7 +361,7 @@ export function BudgetGoals({userId}: BudgetGoalsProps) {
                     <Card>
                         <CardHeader>
                             <CardTitle className="">Create New Goal</CardTitle>
-                            <CardDescription >Set a new financial target</CardDescription>
+                            <CardDescription>Set a new financial target</CardDescription>
                         </CardHeader>
                         <CardContent>
                             {error && <div className="mb-4 text-red-400">{error}</div>}
@@ -439,7 +445,7 @@ export function BudgetGoals({userId}: BudgetGoalsProps) {
                     <Card>
                         <CardHeader>
                             <CardTitle className="">Goal Projections</CardTitle>
-                            <CardDescription >Your financial goals timeline</CardDescription>
+                            <CardDescription>Your financial goals timeline</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-8">
@@ -492,7 +498,7 @@ export function BudgetGoals({userId}: BudgetGoalsProps) {
                 <DialogContent className="bg-gray-800 border-gray-700 ">
                     <DialogHeader>
                         <DialogTitle className="">Edit Goal</DialogTitle>
-                        <DialogDescription >
+                        <DialogDescription>
                             Update your financial goal details
                         </DialogDescription>
                     </DialogHeader>
@@ -542,7 +548,7 @@ export function BudgetGoals({userId}: BudgetGoalsProps) {
 
                             <DialogFooter>
                                 <Button variant="ghost" type="button" onClick={() => setIsEditDialogOpen(false)}
-                                        >
+                                >
                                     Cancel
                                 </Button>
                                 <Button type="submit">Save Changes</Button>
@@ -573,8 +579,7 @@ function GoalCard({
         const today = new Date()
         const deadline = new Date(goal.deadline)
         const diffTime = deadline.getTime() - today.getTime()
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-        return diffDays
+        return Math.ceil(diffTime / (1000 * 60 * 60 * 24))
     }
 
     const days = daysUntilDeadline()
@@ -585,7 +590,7 @@ function GoalCard({
                 <div className="flex justify-between items-start">
                     <div>
                         <CardTitle className="">{goal.title.split(":")[1]}</CardTitle>
-                        <CardDescription >
+                        <CardDescription>
                             {goal.category}
                         </CardDescription>
                     </div>

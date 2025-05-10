@@ -19,8 +19,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import {BudgetApi} from "@/lib/budget-lib/budget_api"
-import {useState} from "react"
+import {createBudgetGoal} from "@/lib/budget-lib/budget_api"
+import React, {useState} from "react"
 
 interface AddGoalDialogProps {
     userId: string,
@@ -78,7 +78,7 @@ export function AddGoalDialog({userId, goal}: AddGoalDialogProps) {
                 deadline: calculateDeadline(formData.time_period)
             }
 
-            await BudgetApi.createBudgetGoal(goalData)
+            await createBudgetGoal(goalData)
             console.log("Goal created successfully")
             setOpen(false)
             // You might want to add a way to refresh the goals list here

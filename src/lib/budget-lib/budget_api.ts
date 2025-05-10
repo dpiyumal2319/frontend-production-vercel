@@ -1,8 +1,9 @@
-// budgetApi.ts
-import { BACKEND_BASE_URL as BURL } from "@/lib/const";
+'use server';
 
-const BACKEND_BASE_URL = process.env.BACKEND_BASE_URL || BURL;
+import AxiosInstance from '@/lib/server-fetcher';
+import {revalidatePath} from 'next/cache';
 
+// Types
 export interface Transaction {
     id: number;
     user_id: string;
@@ -137,7 +138,6 @@ export interface BudgetReport {
     assessment: string;
     recommendations: string[];
     alerts: string[];
-
 }
 
 export interface CategorizeResponse {
@@ -154,115 +154,161 @@ export interface CategoryBreakdown {
     amount: number;
 }
 
-// Helper function for making API calls
-async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<T> {
-    const response = await fetch(`${BACKEND_BASE_URL}/budget${endpoint}`, {
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        credentials: 'include', // Include cookies with every request
-        ...options,
-    });
-
-    if (!response.ok) {
-        throw new Error(`API request failed with status ${response.status}`);
+// Server actions
+export async function getPredictions(userId: string): Promise<PredictionResponse> {
+    try {
+        const response = await AxiosInstance.get(`/budget/predictions?user_id=${userId}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error getting predictions:', error);
+        throw new Error('Failed to fetch predictions');
     }
-
-    return response.json();
 }
 
-// Budget API functions
-export const BudgetApi = {
-    // Endpoint 1: Get financial predictions and advice
-    async getPredictions(userId: string): Promise<PredictionResponse> {
-        return fetchApi(`/predictions?user_id=${userId}`);
-    },
+export async function getBudgetReport(userId: string): Promise<BudgetReportResponse> {
+    try {
+        const response = await AxiosInstance.get(`/budget/budget-report?user_id=${userId}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error getting budget report:', error);
+        throw new Error('Failed to fetch budget report');
+    }
+}
 
-    // Endpoint 2: Get budget report for a specific month
-    async getBudgetReport(userId: string): Promise<BudgetReportResponse> {
-        return fetchApi(`/budget-report?user_id=${userId}`);
-    },
-
-    // Endpoint 3: Categorize a new transaction
-    async categorizeTransaction(
-        description: string,
-        amount: number,
-        type: string
-    ): Promise<CategorizeResponse> {
-        return fetchApi(
-            `/categorize-transaction?description=${encodeURIComponent(
+export async function categorizeTransaction(
+    description: string,
+    amount: number,
+    type: string
+): Promise<CategorizeResponse> {
+    try {
+        const response = await AxiosInstance.get(
+            `/budget/categorize-transaction?description=${encodeURIComponent(
                 description
             )}&amount=${amount}&type=${encodeURIComponent(type)}`
         );
-    },
+        return response.data;
+    } catch (error) {
+        console.error('Error categorizing transaction:', error);
+        throw new Error('Failed to categorize transaction');
+    }
+}
 
-    // Endpoint 4: Chat with the LLM
-    async chat(prompt: string): Promise<ChatResponse> {
-        return fetchApi(`/chat?prompt=${encodeURIComponent(prompt)}`);
-    },
+export async function chat(prompt: string): Promise<ChatResponse> {
+    try {
+        const response = await AxiosInstance.get(`/budget/chat?prompt=${encodeURIComponent(prompt)}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error chatting with LLM:', error);
+        throw new Error('Failed to get chat response');
+    }
+}
 
-    // Transaction CRUD operations
-    async getTransactionsByUser(userId: string): Promise<Transaction[]> {
-        return fetchApi(`/transactions/${userId}`);
-    },
+export async function getTransactionsByUser(userId: string): Promise<Transaction[]> {
+    try {
+        const response = await AxiosInstance.get(`/budget/transactions/${userId}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error getting transactions:', error);
+        throw new Error('Failed to fetch transactions');
+    }
+}
 
-    async createTransaction(transaction: TransactionCreate): Promise<Transaction> {
-        console.log(transaction);
-        return fetchApi('/transactions', {
-            method: 'POST',
-            body: JSON.stringify(transaction),
-        });
-    },
+export async function createTransaction(transaction: TransactionCreate): Promise<Transaction> {
+    try {
+        const response = await AxiosInstance.post('/budget/transactions', transaction);
+        revalidatePath('/transactions'); // Adjust the path as needed
+        return response.data;
+    } catch (error) {
+        console.error('Error creating transaction:', error);
+        throw new Error('Failed to create transaction');
+    }
+}
 
-    async updateTransaction(
-        transactionId: number,
-        updates: TransactionUpdate
-    ): Promise<Transaction> {
-        return fetchApi(`/transactions/${transactionId}`, {
-            method: 'PUT',
-            body: JSON.stringify(updates),
-        });
-    },
+export async function updateTransaction(
+    transactionId: number,
+    updates: TransactionUpdate
+): Promise<Transaction> {
+    try {
+        const response = await AxiosInstance.put(`/budget/transactions/${transactionId}`, updates);
+        revalidatePath('/transactions'); // Adjust the path as needed
+        return response.data;
+    } catch (error) {
+        console.error('Error updating transaction:', error);
+        throw new Error('Failed to update transaction');
+    }
+}
 
-    async deleteTransaction(transactionId: number): Promise<void> {
-        await fetchApi(`/transactions/${transactionId}`, {
-            method: 'DELETE',
-        });
-    },
+export async function deleteTransaction(transactionId: number): Promise<void> {
+    try {
+        await AxiosInstance.delete(`/budget/transactions/${transactionId}`);
+        revalidatePath('/transactions'); // Adjust the path as needed
+    } catch (error) {
+        console.error('Error deleting transaction:', error);
+        throw new Error('Failed to delete transaction');
+    }
+}
 
-    async getTransactionsByCategory(userId: string): Promise<CategoryBreakdown[][]> {
-        return fetchApi(`/transactions/categories/${userId}`);
-    },
+export async function getTransactionsByCategory(userId: string): Promise<CategoryBreakdown[][]> {
+    try {
+        const response = await AxiosInstance.get(`/budget/transactions/categories/${userId}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error getting transactions by category:', error);
+        throw new Error('Failed to fetch transactions by category');
+    }
+}
 
-    async getTransactionSummary(userId: string): Promise<TransactionSummary> {
-        return fetchApi(`/transactions/summary/${userId}`);
-    },
+export async function getTransactionSummary(userId: string): Promise<TransactionSummary> {
+    try {
+        const response = await AxiosInstance.get(`/budget/transactions/summary/${userId}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error getting transaction summary:', error);
+        throw new Error('Failed to fetch transaction summary');
+    }
+}
 
-    // Budget Goal CRUD operations
-    async getBudgetGoals(userId: string): Promise<BudgetGoal[]> {
-        return fetchApi(`/budget-goals/${(userId)}`);
-    },
+export async function getBudgetGoals(userId: string): Promise<BudgetGoal[]> {
+    try {
+        const response = await AxiosInstance.get(`/budget/budget-goals/${userId}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error getting budget goals:', error);
+        throw new Error('Failed to fetch budget goals');
+    }
+}
 
-    async createBudgetGoal(goal: BudgetGoalCreate): Promise<BudgetGoal> {
-        return fetchApi('/budget-goals', {
-            method: 'POST',
-            body: JSON.stringify(goal),
-        });
-    },
+export async function createBudgetGoal(goal: BudgetGoalCreate): Promise<BudgetGoal> {
+    try {
+        const response = await AxiosInstance.post('/budget/budget-goals', goal);
+        revalidatePath('/budget-goals'); // Adjust the path as needed
+        return response.data;
+    } catch (error) {
+        console.error('Error creating budget goal:', error);
+        throw new Error('Failed to create budget goal');
+    }
+}
 
-    async updateBudgetGoal(
-        goalId: number,
-        updates: BudgetGoalUpdate
-    ): Promise<BudgetGoal> {
-        return fetchApi(`/budget-goals/${goalId}`, {
-            method: 'PUT',
-            body: JSON.stringify(updates),
-        });
-    },
+export async function updateBudgetGoal(
+    goalId: number,
+    updates: BudgetGoalUpdate
+): Promise<BudgetGoal> {
+    try {
+        const response = await AxiosInstance.put(`/budget/budget-goals/${goalId}`, updates);
+        revalidatePath('/budget-goals'); // Adjust the path as needed
+        return response.data;
+    } catch (error) {
+        console.error('Error updating budget goal:', error);
+        throw new Error('Failed to update budget goal');
+    }
+}
 
-    async deleteBudgetGoal(goalId: number): Promise<void> {
-        await fetchApi(`/budget-goals/${goalId}`, {
-            method: 'DELETE',
-        });
-    },
-};
+export async function deleteBudgetGoal(goalId: number): Promise<void> {
+    try {
+        await AxiosInstance.delete(`/budget/budget-goals/${goalId}`);
+        revalidatePath('/budget-goals'); // Adjust the path as needed
+    } catch (error) {
+        console.error('Error deleting budget goal:', error);
+        throw new Error('Failed to delete budget goal');
+    }
+}

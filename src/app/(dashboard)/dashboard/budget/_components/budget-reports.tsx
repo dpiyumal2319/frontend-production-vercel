@@ -1,21 +1,28 @@
 "use client"
 
-import { useState, useEffect, useMemo } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { PieChart } from "./charts"
-import { BudgetApi, BudgetReport } from "@/lib/budget-lib/budget_api"
-import { Transaction, TransactionCreate, BudgetReportResponse } from "@/lib/budget-lib/budget_api"
+import {useEffect, useMemo, useState} from "react"
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card"
+import {Button} from "@/components/ui/button"
+import {Input} from "@/components/ui/input"
+import {Label} from "@/components/ui/label"
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select"
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs"
+import {PieChart} from "./charts"
+import {
+    BudgetReport,
+    BudgetReportResponse,
+    categorizeTransaction,
+    createTransaction,
+    getBudgetReport,
+    Transaction,
+    TransactionCreate
+} from "@/lib/budget-lib/budget_api"
 
 interface BudgetReportsProps {
     userId: string
 }
 
-export function BudgetReports({ userId }: BudgetReportsProps) {
+export function BudgetReports({userId}: BudgetReportsProps) {
     const [transactions, setTransactions] = useState<Transaction[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -40,7 +47,7 @@ export function BudgetReports({ userId }: BudgetReportsProps) {
     const [itemsPerPage] = useState(8);
 
     // Calculate paginated transactions using useMemo
-    const { currentTransactions, paginationData } = useMemo(() => {
+    const {currentTransactions, paginationData} = useMemo(() => {
         const allTransactions = transactions
             .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
@@ -68,7 +75,7 @@ export function BudgetReports({ userId }: BudgetReportsProps) {
     }, [transactions, currentPages, itemsPerPage]);
 
     // Pagination controls component for each tab
-    const PaginationControls = ({ type }: { type: 'all' | 'expenses' | 'income' }) => {
+    const PaginationControls = ({type}: { type: 'all' | 'expenses' | 'income' }) => {
         const currentPage = currentPages[type];
         const totalPages = paginationData[type];
 
@@ -119,7 +126,7 @@ export function BudgetReports({ userId }: BudgetReportsProps) {
                         if (reportData.transactions[0].user_id != userId) {
                             // Note: Promise.all returns an array, but we only have one promise here
                             const [budgetReport] = await Promise.all([
-                                BudgetApi.getBudgetReport(userId),
+                                getBudgetReport(userId),
                             ]);
                             reportData = budgetReport;
 
@@ -129,7 +136,7 @@ export function BudgetReports({ userId }: BudgetReportsProps) {
                     } else {
                         // Note: Promise.all returns an array, but we only have one promise here
                         const [budgetReport] = await Promise.all([
-                            BudgetApi.getBudgetReport(userId),
+                            getBudgetReport(userId),
                         ]);
                         reportData = budgetReport;
 
@@ -139,7 +146,7 @@ export function BudgetReports({ userId }: BudgetReportsProps) {
                 } else {
                     // Note: Promise.all returns an array, but we only have one promise here
                     const [budgetReport] = await Promise.all([
-                        BudgetApi.getBudgetReport(userId),
+                        getBudgetReport(userId),
                     ]);
                     reportData = budgetReport;
 
@@ -180,8 +187,7 @@ export function BudgetReports({ userId }: BudgetReportsProps) {
                     });
 
                     // Convert Map to plain object
-                    const grouped = Object.fromEntries(categoryMap.entries());
-                    return grouped;
+                    return Object.fromEntries(categoryMap.entries());
                 };
 
                 const grouped = groupTransactionsByCategory(reportData.transactions);
@@ -215,18 +221,18 @@ export function BudgetReports({ userId }: BudgetReportsProps) {
                 type: newTransaction.type.toLowerCase() as "expense" | "income"
             }
 
-            const category_recieved = await BudgetApi.categorizeTransaction(transactionToCreate.reason, transactionToCreate.amount, transactionToCreate.type);
+            const category_recieved = await categorizeTransaction(transactionToCreate.reason, transactionToCreate.amount, transactionToCreate.type);
             transactionToCreate.category = category_recieved.category;
 
 
-            const createdTransaction = await BudgetApi.createTransaction(transactionToCreate)
+            const createdTransaction = await createTransaction(transactionToCreate)
             // console.log(createdTransaction)
             localStorage.removeItem('report')
             localStorage.removeItem('prediction')
             setTransactions([...transactions, createdTransaction])
 
             // Update category transactions
-            const updatedCategoryTransactions = { ...categoryTransactions }
+            const updatedCategoryTransactions = {...categoryTransactions}
             if (!updatedCategoryTransactions[createdTransaction.category]) {
                 updatedCategoryTransactions[createdTransaction.category] = []
             }
@@ -271,7 +277,7 @@ export function BudgetReports({ userId }: BudgetReportsProps) {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gray-900 text-gray-100">
+            <div className="min-h-screen">
 
                 <div className="flex flex-col items-center justify-center h-[70vh]">
                     <div
@@ -290,7 +296,7 @@ export function BudgetReports({ userId }: BudgetReportsProps) {
     return (
         <div className="space-y-6 p-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Card className="bg-gray-800 border-gray-700">
+                <Card>
                     <CardHeader className="pb-2">
                         <CardTitle className="text-lg text-white">Total Expenses</CardTitle>
                         <CardDescription className="text-gray-300">Current month</CardDescription>
@@ -300,7 +306,7 @@ export function BudgetReports({ userId }: BudgetReportsProps) {
                     </CardContent>
                 </Card>
 
-                <Card className="bg-gray-800 border-gray-700">
+                <Card>
                     <CardHeader className="pb-2">
                         <CardTitle className="text-lg text-white">Net Savings</CardTitle>
                         <CardDescription className="text-gray-300">Current month</CardDescription>
@@ -311,7 +317,7 @@ export function BudgetReports({ userId }: BudgetReportsProps) {
                     </CardContent>
                 </Card>
 
-                <Card className="bg-gray-800 border-gray-700">
+                <Card>
                     <CardHeader className="pb-2">
                         <CardTitle className="text-lg text-white">Largest Expense</CardTitle>
                         <CardDescription className="text-gray-300">Current month</CardDescription>
@@ -326,7 +332,7 @@ export function BudgetReports({ userId }: BudgetReportsProps) {
 
             {budgetReport && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <Card className="bg-gray-800 border-gray-700">
+                    <Card>
                         <CardHeader>
                             <CardTitle className="text-white">Recommendations</CardTitle>
                         </CardHeader>
@@ -342,7 +348,7 @@ export function BudgetReports({ userId }: BudgetReportsProps) {
                         </CardContent>
                     </Card>
 
-                    <Card className="bg-gray-800 border-gray-700">
+                    <Card>
                         <CardHeader>
                             <CardTitle className="text-white">Alerts</CardTitle>
                         </CardHeader>
@@ -363,23 +369,23 @@ export function BudgetReports({ userId }: BudgetReportsProps) {
             <Tabs defaultValue="all">
                 <TabsList className="mb-4 bg-gray-700 p-1 rounded-lg">
                     <TabsTrigger value="all"
-                        className="text-gray-200 data-[state=active]:bg-blue-600 data-[state=active]:text-white">
+                                 className="text-gray-200 data-[state=active]:bg-blue-600 data-[state=active]:text-white">
                         All Transactions
                     </TabsTrigger>
                     <TabsTrigger value="expenses"
-                        className="text-gray-200 data-[state=active]:bg-blue-600 data-[state=active]:text-white">
+                                 className="text-gray-200 data-[state=active]:bg-blue-600 data-[state=active]:text-white">
                         Expense List
                     </TabsTrigger>
                     <TabsTrigger value="income"
-                        className="text-gray-200 data-[state=active]:bg-blue-600 data-[state=active]:text-white">
+                                 className="text-gray-200 data-[state=active]:bg-blue-600 data-[state=active]:text-white">
                         Income List
                     </TabsTrigger>
                     <TabsTrigger value="chart"
-                        className="text-gray-200 data-[state=active]:bg-blue-600 data-[state=active]:text-white">
+                                 className="text-gray-200 data-[state=active]:bg-blue-600 data-[state=active]:text-white">
                         Charts
                     </TabsTrigger>
                     <TabsTrigger value="add"
-                        className="text-gray-200 data-[state=active]:bg-blue-600 data-[state=active]:text-white">
+                                 className="text-gray-200 data-[state=active]:bg-blue-600 data-[state=active]:text-white">
                         Add Transactions
                     </TabsTrigger>
                 </TabsList>
@@ -388,7 +394,7 @@ export function BudgetReports({ userId }: BudgetReportsProps) {
                     <div className="grid gap-4">
                         {currentTransactions.all.map(txn => (
                             <Card key={txn.id}
-                                className="bg-gray-800 border-gray-700 hover:border-gray-600 transition-colors duration-200">
+                                  className="bg-gray-800 border-gray-700 hover:border-gray-600 transition-colors duration-200">
                                 <CardHeader className="pb-3">
                                     <div className="flex justify-between items-start">
                                         <div>
@@ -435,7 +441,7 @@ export function BudgetReports({ userId }: BudgetReportsProps) {
                                 </CardContent>
                             </Card>
                         ))}
-                        <PaginationControls type="all" />
+                        <PaginationControls type="all"/>
                     </div>
                 </TabsContent>
 
@@ -443,7 +449,7 @@ export function BudgetReports({ userId }: BudgetReportsProps) {
                     <div className="grid gap-4">
                         {currentTransactions.expenses.map(txn => (
                             <Card key={txn.id}
-                                className="bg-gray-800 border-gray-700 hover:border-gray-600 transition-colors duration-200">
+                                  className="bg-gray-800 border-gray-700 hover:border-gray-600 transition-colors duration-200">
                                 <CardHeader className="pb-3">
                                     <div className="flex justify-between items-start">
                                         <div>
@@ -490,7 +496,7 @@ export function BudgetReports({ userId }: BudgetReportsProps) {
                                 </CardContent>
                             </Card>
                         ))}
-                        <PaginationControls type="expenses" />
+                        <PaginationControls type="expenses"/>
                     </div>
                 </TabsContent>
 
@@ -498,7 +504,7 @@ export function BudgetReports({ userId }: BudgetReportsProps) {
                     <div className="grid gap-4">
                         {currentTransactions.income.map(txn => (
                             <Card key={txn.id}
-                                className="bg-gray-800 border-gray-700 hover:border-gray-600 transition-colors duration-200">
+                                  className="bg-gray-800 border-gray-700 hover:border-gray-600 transition-colors duration-200">
                                 <CardHeader className="pb-3">
                                     <div className="flex justify-between items-start">
                                         <div>
@@ -545,12 +551,12 @@ export function BudgetReports({ userId }: BudgetReportsProps) {
                                 </CardContent>
                             </Card>
                         ))}
-                        <PaginationControls type="income" />
+                        <PaginationControls type="income"/>
                     </div>
                 </TabsContent>
 
                 <TabsContent value="chart">
-                    <Card className="bg-gray-800 border-gray-700">
+                    <Card>
                         <CardHeader>
                             <CardTitle className="text-lg text-white">Expense Distribution</CardTitle>
                             <CardDescription className="text-gray-300">Breakdown by category</CardDescription>
@@ -574,7 +580,7 @@ export function BudgetReports({ userId }: BudgetReportsProps) {
                             </div>
                         </CardContent>
                     </Card>
-                    <Card className="bg-gray-800 border-gray-700">
+                    <Card>
                         <CardHeader>
                             <CardTitle className="text-lg text-white">Income Distribution</CardTitle>
                             <CardDescription className="text-gray-300">Breakdown by category</CardDescription>
@@ -606,15 +612,15 @@ export function BudgetReports({ userId }: BudgetReportsProps) {
                             <div>
                                 <Label className="text-white">Date</Label>
                                 <Input type="date" value={newTransaction.date}
-                                    onChange={e => setNewTransaction({ ...newTransaction, date: e.target.value })} />
+                                       onChange={e => setNewTransaction({...newTransaction, date: e.target.value})}/>
                             </div>
                             <div>
                                 <Label className="text-white">Amount</Label>
                                 <Input type="number" min="0" step="0.01" value={newTransaction.amount}
-                                    onChange={e => setNewTransaction({
-                                        ...newTransaction,
-                                        amount: parseFloat(e.target.value)
-                                    })} />
+                                       onChange={e => setNewTransaction({
+                                           ...newTransaction,
+                                           amount: parseFloat(e.target.value)
+                                       })}/>
                             </div>
                             {/* <div>
                 <Label className="text-white">Category</Label>
@@ -623,7 +629,7 @@ export function BudgetReports({ userId }: BudgetReportsProps) {
                             <div>
                                 <Label className="text-white">Description</Label>
                                 <Input value={newTransaction.reason}
-                                    onChange={e => setNewTransaction({ ...newTransaction, reason: e.target.value })} />
+                                       onChange={e => setNewTransaction({...newTransaction, reason: e.target.value})}/>
                             </div>
                             <div>
                                 <Label className="text-white">Type</Label>
@@ -635,7 +641,7 @@ export function BudgetReports({ userId }: BudgetReportsProps) {
                                     })}
                                 >
                                     <SelectTrigger>
-                                        <SelectValue placeholder="Select type" />
+                                        <SelectValue placeholder="Select type"/>
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="expense">Expense</SelectItem>

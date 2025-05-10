@@ -10,7 +10,7 @@ import {BudgetGoals} from "@/app/(dashboard)/dashboard/budget/_components/budget
 import {BudgetPredictions} from "@/app/(dashboard)/dashboard/budget/_components/budget-predictions"
 import {AIChat} from "@/app/(dashboard)/dashboard/budget/_components/ai-chat"
 import {DollarSign, TrendingUp, PieChartIcon, Target} from "lucide-react"
-import {BudgetApi, CategoryBreakdown} from "@/lib/budget-lib/budget_api" // Import our API functions
+import {CategoryBreakdown, getTransactionsByCategory, getTransactionSummary} from "@/lib/budget-lib/budget_api" // Import our API functions
 import {getCurrentUser} from "@/actions/auth"
 import {
     calculateBalanceTrendScore,
@@ -57,7 +57,7 @@ export default function Home() {
                 setUserId(user!.user_id)
 
                 // Fetch summary data
-                const summary = await BudgetApi.getTransactionSummary(user!.user_id)
+                const summary = await getTransactionSummary(user!.user_id)
                 setSummaryData({
                     income: summary.income,
                     expense: summary.expense,
@@ -69,7 +69,7 @@ export default function Home() {
                 })
 
                 // Fetch categories
-                const categoryData = await BudgetApi.getTransactionsByCategory(user!.user_id)
+                const categoryData = await getTransactionsByCategory(user!.user_id)
                 setCategories(categoryData)
 
             } catch (error) {
@@ -79,7 +79,7 @@ export default function Home() {
             }
         }
 
-        fetchData()
+        fetchData().then()
     }, [])
 
     const handleSummaryValues = (val: number, val2: number) => {

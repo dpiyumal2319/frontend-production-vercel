@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { AlertCircle, ArrowUpRight, TrendingUp, TrendingDown, LineChartIcon } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { useEffect, useState } from "react"
-import { BudgetApi } from "@/lib/budget-lib/budget_api"
+import {getPredictions} from "@/lib/budget-lib/budget_api"
 import { PredictionResponse } from "@/lib/budget-lib/budget_api"
 import { AddGoalDialog } from "./add-goal-dialog"
 
@@ -28,12 +28,12 @@ export function BudgetPredictions({ userId }: BudgetPredictionProps) {
                 if (cachedPrediction) {
                     predictionData = JSON.parse(cachedPrediction);
                     if (predictionData.predictions.uid != userId) {
-                        const response = await BudgetApi.getPredictions(userId);
+                        const response = await getPredictions(userId);
                         predictionData = response;
                         localStorage.setItem('prediction', JSON.stringify(response));
                     }
                 } else {
-                    const response = await BudgetApi.getPredictions(userId);
+                    const response = await getPredictions(userId);
                     predictionData = response;
                     localStorage.setItem('prediction', JSON.stringify(response));
                 }
