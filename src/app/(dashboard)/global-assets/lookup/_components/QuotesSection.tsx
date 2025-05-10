@@ -1,7 +1,7 @@
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from '@/components/ui/table';
 import {QuoteResponse} from "../_utils/definitions";
-import {Link} from 'lucide-react';
 import {Badge} from "@/components/ui/badge";
+import Link from "next/link";
 
 // ----- Quotes Section Component ----- //
 function QuotesSection({quotes, error}: { quotes: QuoteResponse[]; error: string | null }) {
