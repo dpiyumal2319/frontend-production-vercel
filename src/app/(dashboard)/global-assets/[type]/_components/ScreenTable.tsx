@@ -76,7 +76,7 @@ const ScreenTable = async ({filter, page, result_per_page = 10}: ScreenTableProp
                                     <TableCell className="font-bold text-primary">
                                         <div className="flex items-center gap-1">
                                             <Link href={`/assets/${stock.symbol}`}
-                                                  className="hover:underline cursor-pointer">
+                                                  className="underline cursor-pointer">
                                                 {stock.symbol}
                                             </Link>
                                             {!isAdmin && stock.in_db && (

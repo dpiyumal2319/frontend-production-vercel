@@ -76,7 +76,7 @@ const AssetsTable = async ({page, result_per_page = 10}: ScreenTableProps): Prom
                                 className="font-medium text-xs text-muted-foreground py-3">{stock.stock_id}</TableCell>
                             <TableCell className="text-primary font-medium py-3">
                                 <Link href={`/assets/${stock.ticker_symbol}`}
-                                      className="hover:underline cursor-pointer">
+                                      className="underline cursor-pointer">
                                     {stock.ticker_symbol}
                                 </Link>
                             </TableCell>

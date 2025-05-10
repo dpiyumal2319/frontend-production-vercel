@@ -78,9 +78,11 @@ function NewsCard({newsItem}: { newsItem: NewsResponse }) {
                 {newsItem.relatedTickers && newsItem.relatedTickers.length > 0 && (
                     <CardFooter className="flex flex-wrap gap-2">
                         {newsItem.relatedTickers.map((ticker: string) => (
-                            <Badge key={ticker} className="bg-primary/10" variant="outline">
-                                {ticker}
-                            </Badge>
+                            <Link key={ticker} href={`/assets/${ticker}`}>
+                                <Badge className="bg-primary/10 cursor-pointer" variant="outline">
+                                    {ticker}
+                                </Badge>
+                            </Link>
                         ))}
                     </CardFooter>
                 )}
