@@ -18,6 +18,7 @@ import {exportToCSV} from "@/lib/export"
 import {PredictionData, StockData, ModelMetadataType} from "@/lib/types/stock_prediction";
 import AxiosInstance from "@/lib/client-fetcher";
 import {AxiosError} from "axios";
+import {fetchStockPrediction} from "@/app/(dashboard)/dashboard/stockmarketprediction/_actions/action";
 // import { number } from "zod"
 
 type companyType = {
@@ -79,12 +80,11 @@ export default function StockDashboard() {
         const fetchStockData = async () => {
             setPredicting(true); // Show loading popup
             try {
-                const response = await AxiosInstance.post(`/V2/get-predicted-prices`, {
+                const data = await fetchStockPrediction({
                     starting_date: formatDate(dateRange.from ?? new Date()),
                     ending_date: formatDate(dateRange.to ?? new Date()),
                     ticker_symbol: selectedCompany,
                 });
-                const data = response.data;
                 setStockData(data.stockData);
                 setModelMetadata(data.modelMetadata);
                 setPredictionData(data.predictionData);
@@ -113,7 +113,7 @@ export default function StockDashboard() {
             }
         };
 
-        fetchStockData();
+        fetchStockData().then();
 
         // Fetch prediction data
         // const predictions = getPredictionData(selectedCompany, dateRange.to);
