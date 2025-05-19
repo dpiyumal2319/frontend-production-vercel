@@ -67,7 +67,7 @@ interface TickerResponse {
   tickers: Ticker[];
 }
 
-interface budgetData {
+export interface budgetData {
   income: number;
   expense: number;
   balance: number;

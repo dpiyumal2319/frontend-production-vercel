@@ -29,7 +29,7 @@ export async function login(_previousState: string, formData: FormData): Promise
         console.log(`User ${username} logged in successfully`);
 
         // Redirect to dashboard after successful login
-        redirect('/dashboard');
+        redirect('/global-assets/lookup');
     } catch (error) {
         // Type narrowing for the axios error
         if (axios.isAxiosError(error)) {

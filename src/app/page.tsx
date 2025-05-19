@@ -95,7 +95,7 @@ export default function Home() {
                                 <Link href="/auth/register">Get Started <ArrowUpRight className="ml-2 h-4 w-4"/></Link>
                             </Button>
                             <Button variant="outline" size="lg" asChild>
-                                <Link href="/dashboard">Demo Dashboard</Link>
+                                <Link href="/global-assets/lookup">Demo Dashboard</Link>
                             </Button>
                         </div>
                     </div>

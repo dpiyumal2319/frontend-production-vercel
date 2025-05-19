@@ -18,6 +18,7 @@ import {
     calculateSavingsScore,
     calculateSpendingScore
 } from "@/app/(dashboard)/dashboard/budget/_utils/utils"
+import {AddTransactionDialog} from "@/app/(dashboard)/dashboard/budget/_components/AddTransactionDialog";
 
 export interface TransactionSummary {
     income: number;
@@ -108,36 +109,43 @@ export default function Home() {
     return (
         <div className="min-h-screen bg-background text-foreground py-6 px-8">
             <Tabs defaultValue="dashboard" value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid grid-cols-4 mb-8 bg-muted p-1 rounded-lg">
-                    <TabsTrigger
-                        value="dashboard"
-                        className="flex items-center gap-2 text-muted-foreground data-[state=active]:bg-blue-600 data-[state=active]:text-white"
-                    >
-                        <DollarSign className="h-4 w-4"/>
-                        <span className="hidden sm:inline">Dashboard</span>
-                    </TabsTrigger>
-                    <TabsTrigger
-                        value="goals"
-                        className="flex items-center gap-2 text-muted-foreground data-[state=active]:bg-blue-600 data-[state=active]:text-white"
-                    >
-                        <Target className="h-4 w-4"/>
-                        <span className="hidden sm:inline">Budget Goals</span>
-                    </TabsTrigger>
-                    <TabsTrigger
-                        value="reports"
-                        className="flex items-center gap-2 text-muted-foreground data-[state=active]:bg-blue-600 data-[state=active]:text-white"
-                    >
-                        <PieChartIcon className="h-4 w-4"/>
-                        <span className="hidden sm:inline">Budget Reports</span>
-                    </TabsTrigger>
-                    <TabsTrigger
-                        value="predictions"
-                        className="flex items-center gap-2 text-muted-foreground data-[state=active]:bg-blue-600 data-[state=active]:text-white"
-                    >
-                        <TrendingUp className="h-4 w-4"/>
-                        <span className="hidden sm:inline">Predictions</span>
-                    </TabsTrigger>
-                </TabsList>
+                <div className={'flex gap-4'}>
+                    <TabsList className="w-full">
+                        <TabsTrigger
+                            value="dashboard"
+                            className="flex items-center gap-2 text-muted-foreground data-[state=active]:bg-blue-600 data-[state=active]:text-white"
+                        >
+                            <DollarSign className="h-4 w-4"/>
+                            <span className="hidden sm:inline">Dashboard</span>
+                        </TabsTrigger>
+                        <TabsTrigger
+                            value="goals"
+                            className="flex items-center gap-2 text-muted-foreground data-[state=active]:bg-blue-600 data-[state=active]:text-white"
+                        >
+                            <Target className="h-4 w-4"/>
+                            <span className="hidden sm:inline">Budget Goals</span>
+                        </TabsTrigger>
+                        <TabsTrigger
+                            value="reports"
+                            className="flex items-center gap-2 text-muted-foreground data-[state=active]:bg-blue-600 data-[state=active]:text-white"
+                        >
+                            <PieChartIcon className="h-4 w-4"/>
+                            <span className="hidden sm:inline">Budget Reports</span>
+                        </TabsTrigger>
+                        <TabsTrigger
+                            value="predictions"
+                            className="flex items-center gap-2 text-muted-foreground data-[state=active]:bg-blue-600 data-[state=active]:text-white"
+                        >
+                            <TrendingUp className="h-4 w-4"/>
+                            <span className="hidden sm:inline">Predictions</span>
+                        </TabsTrigger>
+                    </TabsList>
+
+                    <div className={'flex justify-end mb-4'}>
+                        <AddTransactionDialog userId={userId}/>
+                    </div>
+                </div>
+
 
                 <TabsContent value="dashboard" className="space-y-6">
                     {isLoading ? <div className="min-h-screen bg-background text-foreground">

@@ -8,8 +8,6 @@ import {SidebarData} from "@/app/(dashboard)/_utils/types";
 import {
     ChartCandlestickIcon, DollarSign,
     Earth,
-    FolderGit2,
-    LayoutGrid,
     PieChart,
     Users,
     ChartColumnIncreasing
@@ -17,11 +15,6 @@ import {
 
 const userSidebar: SidebarData = {
     navMain: [
-        {
-            title: "Dashboard",
-            url: "/dashboard",
-            icon: LayoutGrid,
-        },
         {
             title: "Global Market",
             url: '/assets',
@@ -62,28 +55,11 @@ const userSidebar: SidebarData = {
             title: "StockMarket Prediction",
             url: "/dashboard/stockmarketprediction",
             icon: ChartColumnIncreasing
-        }],
-    guides: [
-        {
-            name: "ML Model Notebook",
-            url: "/notebooks",
-            icon: FolderGit2,
-        },
-        {
-            name: "Documentation",
-            url: "/docs",
-            icon: Users,
-        },
-    ],
+        }]
 }
 
 const adminSidebar: SidebarData = {
     navMain: [
-        {
-            title: "Dashboard",
-            url: "/dashboard",
-            icon: LayoutGrid,
-        },
         {
             title: "Global Assets",
             url: '/assets',
@@ -109,14 +85,24 @@ const adminSidebar: SidebarData = {
             title: "System Assets",
             url: '/assets/db',
             icon: ChartCandlestickIcon,
+        },
+        {
+            title: "Budget Tracker",
+            url: "/dashboard/budget",
+            icon: DollarSign,
+        },
+        {
+            title: "Portfolio Optimization",
+            url: "/dashboard/portfolio",
+            icon: PieChart
+        },
+        {
+            title: "StockMarket Prediction",
+            url: "/dashboard/stockmarketprediction",
+            icon: ChartColumnIncreasing
         }
     ],
     guides: [
-        {
-            name: "ML Model Notebook",
-            url: "/notebooks",
-            icon: FolderGit2,
-        },
         {
             name: "Documentation",
             url: "/docs",
@@ -130,7 +116,8 @@ const AppSidebarLinks = ({role}: { role: Role }) => {
     return (
         <>
             <NavMain items={sidebar.navMain}/>
-            <NavGuides projects={sidebar.guides}/>
+            {sidebar.guides ?
+                <NavGuides projects={sidebar.guides}/> : null}
         </>
     );
 };
