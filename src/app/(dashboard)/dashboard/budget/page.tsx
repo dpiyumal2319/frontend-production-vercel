@@ -1,6 +1,6 @@
 "use client"
 
-import {useEffect, useState} from "react"
+import {useState} from "react"
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs"
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card"
 import {Progress} from "@/components/ui/progress"
@@ -8,10 +8,11 @@ import {LineChart, PieChart} from "@/app/(dashboard)/dashboard/budget/_component
 import {BudgetReports} from "@/app/(dashboard)/dashboard/budget/_components/budget-reports"
 import {BudgetGoals} from "@/app/(dashboard)/dashboard/budget/_components/budget-goals"
 import {BudgetPredictions} from "@/app/(dashboard)/dashboard/budget/_components/budget-predictions"
-import {AIChat} from "@/app/(dashboard)/dashboard/budget/_components/ai-chat"
 import {DollarSign, TrendingUp, PieChartIcon, Target} from "lucide-react"
-import {CategoryBreakdown, getTransactionsByCategory, getTransactionSummary} from "@/lib/budget-lib/budget_api" // Import our API functions
-import {getCurrentUser} from "@/actions/auth"
+import {
+    CategoryBreakdown,
+    getTransactionsByCategory,
+} from "@/lib/budget-lib/budget_api" // Import our API functions
 import {
     calculateBalanceTrendScore,
     calculateOverallScore,
@@ -19,97 +20,67 @@ import {
     calculateSpendingScore
 } from "@/app/(dashboard)/dashboard/budget/_utils/utils"
 import {AddTransactionDialog} from "@/app/(dashboard)/dashboard/budget/_components/AddTransactionDialog";
-
-export interface TransactionSummary {
-    income: number;
-    expense: number;
-    balance: number;
-    previousIncome: number;
-    previousExpense: number;
-    previousBalance: number;
-    transactions: {
-        date: string;
-        balance: number;
-    }[];
-}
+import LoadingAnimation from "@/app/(dashboard)/_components/LoadingAnimation";
+import {useBalance} from "@/context/BalanceContext"; // Import the custom context hook
+import {useEffect} from "react";
+import {getCurrentUser} from "@/actions/auth";
 
 export default function Home() {
     const [activeTab, setActiveTab] = useState("dashboard")
-    const [isLoading, setIsLoading] = useState(true);
-    const [userId, setUserId] = useState<string>("") // You'll need to get this from your auth system
-    const [summaryData, setSummaryData] = useState<TransactionSummary>({
-        income: 0,
-        expense: 0,
-        balance: 0,
-        previousIncome: 0,
-        previousExpense: 0,
-        previousBalance: 0,
-        transactions: []
-    })
+    const [userId, setUserId] = useState<string>("")
     const [categories, setCategories] = useState<CategoryBreakdown[][]>([[], []])
 
+    // Use the balance context instead of manual fetching
+    const {data: summaryData, isLoading, refetch} = useBalance();
+
     useEffect(() => {
-        const fetchData = async () => {
-            setIsLoading(true); // Set loading to true when starting to fetch
-            // In a real app, you'd get the user ID from your auth system
-            const user = await getCurrentUser()
+        const fetchCategories = async () => {
+            if (!summaryData) return;
 
             try {
-                setUserId(user!.user_id)
-
-                // Fetch summary data
-                const summary = await getTransactionSummary(user!.user_id)
-                setSummaryData({
-                    income: summary.income,
-                    expense: summary.expense,
-                    balance: summary.balance,
-                    previousIncome: summary.previous_income,
-                    previousExpense: summary.previous_expense,
-                    previousBalance: summary.previous_balance,
-                    transactions: summary.transactions
-                })
-
-                // Fetch categories
-                const categoryData = await getTransactionsByCategory(user!.user_id)
-                setCategories(categoryData)
-
+                // We still need to fetch categories separately
+                const categoryData = await getTransactionsByCategory(userId);
+                setCategories(categoryData);
             } catch (error) {
-                console.error("Failed to fetch data:", error)
-            } finally {
-                setIsLoading(false); // Set loading to false when done (whether success or error)
+                console.error("Failed to fetch categories:", error);
             }
-        }
+        };
 
-        fetchData().then()
-    }, [])
+        if (userId) {
+            fetchCategories();
+        }
+    }, [userId, summaryData]);
+
+    // Set userId when summaryData is available (assuming userId comes from getCurrentUser in the context)
+    useEffect(() => {
+        const initUser = async () => {
+            try {
+                const user = await getCurrentUser();
+                if (user) {
+                    setUserId(user.user_id);
+                }
+            } catch (error) {
+                console.error("Failed to get current user:", error);
+            }
+        };
+
+        initUser();
+    }, []);
 
     const handleSummaryValues = (val: number, val2: number) => {
-        if (val2 == 0) {
+        if (val2 === 0) {
             return ""
         }
         if (val > val2) {
-            return "+" + ((val2 - val) / val2 * 100).toFixed(2) + "%"
+            return "+" + ((val - val2) / val2 * 100).toFixed(2) + "%"
         }
         return ((val2 - val) / val2 * 100).toFixed(2) + "%"
     }
 
-    // if (isLoading) {
-    //     return (
-    //         <div className="min-h-screen bg-background text-foreground">
-
-    //             <div className="flex flex-col items-center justify-center h-[70vh]">
-    //                 <div
-    //                     className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4"></div>
-    //                 <p className="text-foreground">Loading your financial data...</p>
-    //             </div>
-    //         </div>
-    //     )
-    // }
-
     return (
         <div className="min-h-screen bg-background text-foreground py-6 px-8">
             <Tabs defaultValue="dashboard" value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <div className={'flex gap-4'}>
+                <div className="flex gap-4">
                     <TabsList className="w-full">
                         <TabsTrigger
                             value="dashboard"
@@ -141,22 +112,18 @@ export default function Home() {
                         </TabsTrigger>
                     </TabsList>
 
-                    <div className={'flex justify-end mb-4'}>
-                        <AddTransactionDialog userId={userId}/>
+                    <div className="flex justify-end mb-4">
+                        <AddTransactionDialog userId={userId} onTransactionAdded={refetch}/>
                     </div>
                 </div>
 
 
                 <TabsContent value="dashboard" className="space-y-6">
-                    {isLoading ? <div className="min-h-screen bg-background text-foreground">
-
-                            <div className="flex flex-col items-center justify-center h-[70vh]">
-                                <div
-                                    className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4"></div>
-                                <p className="text-foreground">Loading your financial data...</p>
-                            </div>
-
-                        </div> :
+                    {isLoading || !summaryData ?
+                        <div className="w-full h-screen">
+                            <LoadingAnimation/>
+                        </div>
+                        :
                         <div className="space-y-4">
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <Card>
@@ -168,7 +135,7 @@ export default function Home() {
                                     <CardContent>
                                         <div className="text-3xl font-bold text-white">${summaryData.balance}</div>
                                         <div className="text-sm text-green-400 mt-1"
-                                             style={summaryData.balance > summaryData.previousBalance ? {color: "green"} : {color: "red"}}>{summaryData.previousBalance === 0 ? "" : `${handleSummaryValues(summaryData.balance, summaryData.previousBalance)} from last month`}</div>
+                                             style={summaryData.balance > summaryData.previous_balance ? {color: "green"} : {color: "red"}}>{summaryData.previous_balance === 0 ? "" : `${handleSummaryValues(summaryData.balance, summaryData.previous_balance)} from last month`}</div>
                                     </CardContent>
                                 </Card>
                                 <Card>
@@ -180,7 +147,7 @@ export default function Home() {
                                     <CardContent>
                                         <div className="text-3xl font-bold text-white">${summaryData.income}</div>
                                         <div className="text-sm text-green-400 mt-1"
-                                             style={summaryData.income > summaryData.previousIncome ? {color: "green"} : {color: "red"}}>{summaryData.previousIncome === 0 ? "" : `${handleSummaryValues(summaryData.income, summaryData.previousIncome)} from last month`}</div>
+                                             style={summaryData.income > summaryData.previous_income ? {color: "green"} : {color: "red"}}>{summaryData.previous_income === 0 ? "" : `${handleSummaryValues(summaryData.income, summaryData.previous_income)} from last month`}</div>
                                     </CardContent>
                                 </Card>
                                 <Card>
@@ -192,7 +159,7 @@ export default function Home() {
                                     <CardContent>
                                         <div className="text-3xl font-bold text-white">${summaryData.expense}</div>
                                         <div className="text-sm text-green-400 mt-1"
-                                             style={summaryData.expense <= summaryData.previousExpense ? {color: "green"} : {color: "red"}}>{summaryData.previousExpense === 0 ? "" : `${handleSummaryValues(summaryData.expense, summaryData.previousExpense)} from last month`}</div>
+                                             style={summaryData.expense <= summaryData.previous_expense ? {color: "green"} : {color: "red"}}>{summaryData.previous_expense === 0 ? "" : `${handleSummaryValues(summaryData.expense, summaryData.previous_expense)} from last month`}</div>
                                     </CardContent>
                                 </Card>
                             </div>
@@ -317,9 +284,6 @@ export default function Home() {
                     <BudgetPredictions userId={userId}/>
                 </TabsContent>
             </Tabs>
-
-            {/* Floating AI Chat Button */}
-            <AIChat/>
         </div>
     )
 }

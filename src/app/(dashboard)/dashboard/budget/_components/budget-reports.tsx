@@ -17,6 +17,7 @@ import {
     Transaction,
     TransactionCreate
 } from "@/lib/budget-lib/budget_api"
+import LoadingAnimation from "@/app/(dashboard)/_components/LoadingAnimation";
 
 interface BudgetReportsProps {
     userId: string
@@ -277,14 +278,8 @@ export function BudgetReports({userId}: BudgetReportsProps) {
 
     if (loading) {
         return (
-            <div className="min-h-screen">
-
-                <div className="flex flex-col items-center justify-center h-[70vh]">
-                    <div
-                        className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4"></div>
-                    <p className="text-gray-300">Loading your budget report...</p>
-                </div>
-
+            <div className={'min-h-screen flex items-center justify-center'}>
+                <LoadingAnimation/>
             </div>
         )
     }

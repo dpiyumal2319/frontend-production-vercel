@@ -25,6 +25,7 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog"
 import {Calendar, Check, X} from "lucide-react"
+import LoadingAnimation from "@/app/(dashboard)/_components/LoadingAnimation";
 
 interface BudgetGoalsProps {
     userId: string
@@ -172,12 +173,10 @@ export function BudgetGoals({userId}: BudgetGoalsProps) {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-muted text-muted-foreground">
+            <div className="min-h-screen">
 
                 <div className="flex flex-col items-center justify-center h-[70vh]">
-                    <div
-                        className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mb-4"></div>
-                    <p>Loading your budget goals...</p>
+                    <LoadingAnimation/>
                 </div>
 
             </div>

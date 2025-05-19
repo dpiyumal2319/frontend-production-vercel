@@ -5,7 +5,7 @@ import {useBalance} from '@/context/BalanceContext';
 import {CircleDollarSign} from 'lucide-react';
 
 export default function BalanceDisplay() {
-    const {balance, isLoading} = useBalance();
+    const {data, isLoading} = useBalance();
 
     return (
         <div className="flex items-center gap-2 px-3 py-1 rounded-md bg-muted text-muted-foreground dark:bg-muted/50">
@@ -16,7 +16,7 @@ export default function BalanceDisplay() {
                 </span>
             ) : (
                 <span className="text-sm font-semibold text-foreground">
-                    ${balance?.toFixed(2)}
+                    ${data?.balance?.toFixed(2)}
                 </span>
             )}
         </div>

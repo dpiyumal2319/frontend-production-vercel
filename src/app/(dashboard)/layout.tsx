@@ -9,6 +9,7 @@ import Link from "next/link";
 import HeaderSearchBar from "./_components/HeaderSearchBar";
 import {BalanceProvider} from "@/context/BalanceContext";
 import BalanceDisplay from "@/app/(dashboard)/_components/BalanceDisplay"; // Import the new component
+import {AIChat} from "@/app/(dashboard)/_components/ai-chat";
 
 export default function DashboardLayout({children}: { children: React.ReactNode }) {
     return (
@@ -54,6 +55,7 @@ export default function DashboardLayout({children}: { children: React.ReactNode 
                         {/*        <span>© 2024 - Sem 4 Group J</span>*/}
                         {/*    </div>*/}
                         {/*</footer>*/}
+                        <AIChat/>
                     </div>
                 </SidebarInset>
             </SidebarProvider>

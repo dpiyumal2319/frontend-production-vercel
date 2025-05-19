@@ -5,15 +5,13 @@ import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger} from "@
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
-// We will remove the Select components as per the request
-// import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {createTransaction, categorizeTransaction, TransactionCreate} from "@/lib/budget-lib/budget_api";
-import {useBalance} from "@/context/BalanceContext"; // Assuming BalanceContext.tsx is in the same directory or adjust path
 import {toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; // Import default CSS for react-toastify
 
 interface AddTransactionDialogProps {
     userId: string;
+    onTransactionAdded: () => void
 }
 
 // Helper to format date to YYYY-MM-DD for input type="date"
@@ -21,9 +19,8 @@ const formatDateForInput = (date: Date): string => {
     return date.toISOString().split('T')[0];
 };
 
-export function AddTransactionDialog({userId}: AddTransactionDialogProps) {
+export function AddTransactionDialog({userId, onTransactionAdded}: AddTransactionDialogProps) {
     const [isOpen, setIsOpen] = useState(false);
-    const {refetch: refetchBalance} = useBalance(); // Get refetch function from context
 
     const initialTransactionState: Omit<TransactionCreate, 'user_id' | 'category' | 'created_at'> & {
         category?: string,
@@ -73,7 +70,7 @@ export function AddTransactionDialog({userId}: AddTransactionDialogProps) {
             await createTransaction(transactionToCreate);
 
             // Step 3: Refetch balance
-            refetchBalance(); // Use await if refetchBalance returns a promise and you need to wait
+            onTransactionAdded(); // Use await if refetchBalance returns a promise and you need to wait
 
             // Step 4: Reset form and close dialog on success
             setNewTransaction(initialTransactionState);

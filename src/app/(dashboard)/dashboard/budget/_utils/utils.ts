@@ -1,5 +1,4 @@
-import { TransactionSummary } from "../page";
-
+import { TransactionSummary } from "@/lib/budget-lib/budget_api";
 
 // Example calculation functions (adjust based on your specific metrics)
 export function calculateSavingsScore(summary: TransactionSummary): number {
@@ -18,7 +17,7 @@ export function calculateSpendingScore(summary: TransactionSummary): number {
 
 export function calculateBalanceTrendScore(summary: TransactionSummary): number {
     // Score based on whether balance is improving
-    const trend = summary.balance - summary.previousBalance;
+    const trend = summary.balance - summary.previous_balance;
     if (trend > 0) return 80; // improving
     if (trend < 0) return 40; // declining
     return 60; // stable

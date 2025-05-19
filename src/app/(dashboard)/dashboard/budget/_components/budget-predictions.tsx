@@ -1,20 +1,21 @@
 "use client"
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Badge } from "@/components/ui/badge"
-import { AlertCircle, ArrowUpRight, TrendingUp, TrendingDown, LineChartIcon } from "lucide-react"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { useEffect, useState } from "react"
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card"
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs"
+import {Badge} from "@/components/ui/badge"
+import {AlertCircle, ArrowUpRight, TrendingUp, TrendingDown, LineChartIcon} from "lucide-react"
+import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert"
+import {useEffect, useState} from "react"
 import {getPredictions} from "@/lib/budget-lib/budget_api"
-import { PredictionResponse } from "@/lib/budget-lib/budget_api"
-import { AddGoalDialog } from "./add-goal-dialog"
+import {PredictionResponse} from "@/lib/budget-lib/budget_api"
+import {AddGoalDialog} from "./add-goal-dialog"
+import LoadingAnimation from "@/app/(dashboard)/_components/LoadingAnimation";
 
 interface BudgetPredictionProps {
     userId: string
 }
 
-export function BudgetPredictions({ userId }: BudgetPredictionProps) {
+export function BudgetPredictions({userId}: BudgetPredictionProps) {
     const [data, setData] = useState<PredictionResponse | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -51,13 +52,8 @@ export function BudgetPredictions({ userId }: BudgetPredictionProps) {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gray-900 text-gray-100">
-
-                <div className="flex flex-col items-center justify-center h-[70vh]">
-                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4"></div>
-                    <p className="text-gray-300">Loading your predictions...</p>
-                </div>
-
+            <div className={'min-h-screen'}>
+                <LoadingAnimation/>
             </div>
         )
     }
@@ -65,7 +61,7 @@ export function BudgetPredictions({ userId }: BudgetPredictionProps) {
     if (error) {
         return (
             <Alert variant="destructive" className="bg-red-900/30 border-red-800/30">
-                <AlertCircle className="h-4 w-4" />
+                <AlertCircle className="h-4 w-4"/>
                 <AlertTitle>Error</AlertTitle>
                 <AlertDescription className="text-gray-300">
                     {error}
@@ -77,7 +73,7 @@ export function BudgetPredictions({ userId }: BudgetPredictionProps) {
     if (!data) {
         return (
             <Alert className="bg-blue-900/30 border-blue-800/30">
-                <AlertCircle className="h-4 w-4 text-blue-400" />
+                <AlertCircle className="h-4 w-4 text-blue-400"/>
                 <AlertTitle className="text-white">No Data Available</AlertTitle>
                 <AlertDescription className="text-gray-300">
                     {"We couldn't find any prediction data for your account."}
@@ -87,7 +83,7 @@ export function BudgetPredictions({ userId }: BudgetPredictionProps) {
     }
 
     // Extract predictions from data
-    const { predictions, financial_advice, budget_goals } = data
+    const {predictions, financial_advice, budget_goals} = data
 
     // Create prediction cards data dynamically
     const predictionCards = [
@@ -148,7 +144,7 @@ export function BudgetPredictions({ userId }: BudgetPredictionProps) {
     return (
         <div className="space-y-6 p-8">
             <Alert className="bg-blue-900/30 border-blue-800/30">
-                <AlertCircle className="h-4 w-4 text-blue-400" />
+                <AlertCircle className="h-4 w-4 text-blue-400"/>
                 <AlertTitle className="text-white">Budget Predictions</AlertTitle>
                 <AlertDescription className="text-gray-300">
                     These predictions are based on your historical financial data and current spending patterns.
@@ -223,7 +219,7 @@ export function BudgetPredictions({ userId }: BudgetPredictionProps) {
                                                     <Icon className={`h-5 w-5 mr-2 ${isIncome
                                                         ? isPositive ? 'text-green-400' : 'text-red-400'
                                                         : isPositive ? 'text-red-400' : 'text-green-400'
-                                                        }`} />
+                                                    }`}/>
                                                     {prediction.title}
                                                 </CardTitle>
                                                 <CardDescription className="text-gray-300">
@@ -252,7 +248,7 @@ export function BudgetPredictions({ userId }: BudgetPredictionProps) {
                                             <div className={`text-lg font-semibold ${isIncome
                                                 ? isPositive ? 'text-green-400' : 'text-red-400'
                                                 : isPositive ? 'text-red-400' : 'text-green-400'
-                                                }`}>
+                                            }`}>
                                                 {((prediction.value - prediction.currentValue) / prediction.currentValue * 100).toFixed(1)}%
                                             </div>
                                         </div>
@@ -283,7 +279,7 @@ export function BudgetPredictions({ userId }: BudgetPredictionProps) {
                                 {financial_advice.daily_actions && (
                                     <div className="p-4 border border-gray-600 rounded-lg">
                                         <div className="flex items-start">
-                                            <ArrowUpRight className="h-5 w-5 mr-2 text-green-400 mt-0.5" />
+                                            <ArrowUpRight className="h-5 w-5 mr-2 text-green-400 mt-0.5"/>
                                             <div>
                                                 <div className="font-medium mb-1 text-white">Daily Actions</div>
                                                 <div
@@ -296,7 +292,7 @@ export function BudgetPredictions({ userId }: BudgetPredictionProps) {
                                 {financial_advice.weekly_actions && (
                                     <div className="p-4 border border-gray-600 rounded-lg">
                                         <div className="flex items-start">
-                                            <ArrowUpRight className="h-5 w-5 mr-2 text-blue-400 mt-0.5" />
+                                            <ArrowUpRight className="h-5 w-5 mr-2 text-blue-400 mt-0.5"/>
                                             <div>
                                                 <div className="font-medium mb-1 text-white">Weekly Actions</div>
                                                 <div
@@ -309,7 +305,7 @@ export function BudgetPredictions({ userId }: BudgetPredictionProps) {
                                 {financial_advice.monthly_actions && (
                                     <div className="p-4 border border-gray-600 rounded-lg">
                                         <div className="flex items-start">
-                                            <ArrowUpRight className="h-5 w-5 mr-2 text-purple-400 mt-0.5" />
+                                            <ArrowUpRight className="h-5 w-5 mr-2 text-purple-400 mt-0.5"/>
                                             <div>
                                                 <div className="font-medium mb-1 text-white">Monthly Actions</div>
                                                 <div
@@ -322,7 +318,7 @@ export function BudgetPredictions({ userId }: BudgetPredictionProps) {
 
                             {financial_advice.risks && (
                                 <Alert className="bg-red-900/30 border-red-600/30 border">
-                                    <AlertCircle className="h-4 w-4 text-red-400" />
+                                    <AlertCircle className="h-4 w-4 text-red-400"/>
                                     <AlertTitle className="text-white">Potential Risks</AlertTitle>
                                     <AlertDescription className="text-gray-300">
                                         {financial_advice.risks}
@@ -332,7 +328,7 @@ export function BudgetPredictions({ userId }: BudgetPredictionProps) {
 
                             {financial_advice.long_term_insights && (
                                 <Alert className="bg-green-900/30 border-green-600/30 border">
-                                    <LineChartIcon className="h-4 w-4 text-green-400" />
+                                    <LineChartIcon className="h-4 w-4 text-green-400"/>
                                     <AlertTitle className="text-white">Long Term Insights</AlertTitle>
                                     <AlertDescription className="text-gray-300">
                                         {financial_advice.long_term_insights}
@@ -353,7 +349,7 @@ export function BudgetPredictions({ userId }: BudgetPredictionProps) {
                                         Recommended financial targets based on your situation
                                     </CardDescription>
                                 </div>
-                                <AddGoalDialog userId={userId} goal={budget_goals[0]} />
+                                <AddGoalDialog userId={userId} goal={budget_goals[0]}/>
                             </div>
                         </CardHeader>
                         <CardContent className="space-y-4">

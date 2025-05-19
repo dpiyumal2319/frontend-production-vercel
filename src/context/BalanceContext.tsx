@@ -1,20 +1,19 @@
-// context/BalanceContext.tsx
 'use client';
 import React, {createContext, useContext} from 'react';
 import useSWR from 'swr';
 import AxiosInstance from '@/lib/client-fetcher';
 import {getCurrentUser} from "@/actions/auth";
-import {budgetData} from "@/app/(dashboard)/dashboard/portfolio/_components/port-opt-form"; // your interceptor-based Axios instance
+import {budgetData} from "@/app/(dashboard)/dashboard/portfolio/_components/port-opt-form";
+import {TransactionSummary} from "@/lib/budget-lib/budget_api";
 
-const fetcher = async () => {
-    const currentUser = await getCurrentUser()
-
-    const res = await AxiosInstance.get<budgetData>(`/budget/transactions/summary/${currentUser?.user_id}`);
+const fetcher = async (): Promise<budgetData> => {
+    const currentUser = await getCurrentUser();
+    const res = await AxiosInstance.get<TransactionSummary>(`/budget/transactions/summary/${currentUser?.user_id}`);
     return res.data;
 };
 
 const BalanceContext = createContext<{
-    balance: number | null;
+    data: budgetData | null;
     isLoading: boolean;
     refetch: () => void;
 } | null>(null);
@@ -25,7 +24,7 @@ export const BalanceProvider = ({children}: { children: React.ReactNode }) => {
     return (
         <BalanceContext.Provider
             value={{
-                balance: data?.balance ?? null,
+                data: data ?? null,
                 isLoading: !error && !data,
                 refetch: () => mutate(),
             }}
