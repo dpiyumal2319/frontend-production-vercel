@@ -1,13 +1,12 @@
 "use client"
 
 import {useState, useEffect} from "react"
-import {BadgeCheck, Bell, ChevronsUpDown, CreditCard, LogOut, Sparkles} from "lucide-react"
+import { ChevronsUpDown, LogOut} from "lucide-react"
 
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar"
 import {
     DropdownMenu,
     DropdownMenuContent,
-    DropdownMenuGroup,
     DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuSeparator,
@@ -38,7 +37,7 @@ export function NavUser() {
             }
         }
 
-        fetchUser()
+        fetchUser().then()
     }, [])
 
     return (
@@ -114,28 +113,27 @@ export function NavUser() {
                                         </div>
                                     </div>
                                 </DropdownMenuLabel>
-                                <DropdownMenuSeparator/>
-                                <DropdownMenuGroup>
-                                    <DropdownMenuItem>
-                                        <Sparkles className="mr-2 h-4 w-4"/>
-                                        Upgrade to Pro
-                                    </DropdownMenuItem>
-                                </DropdownMenuGroup>
-                                <DropdownMenuSeparator/>
-                                <DropdownMenuGroup>
-                                    <DropdownMenuItem>
-                                        <BadgeCheck className="mr-2 h-4 w-4"/>
-                                        Account
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem>
-                                        <CreditCard className="mr-2 h-4 w-4"/>
-                                        Billing
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem>
-                                        <Bell className="mr-2 h-4 w-4"/>
-                                        Notifications
-                                    </DropdownMenuItem>
-                                </DropdownMenuGroup>
+                                {/*<DropdownMenuGroup>*/}
+                                {/*    <DropdownMenuItem>*/}
+                                {/*        <Sparkles className="mr-2 h-4 w-4"/>*/}
+                                {/*        Upgrade to Pro*/}
+                                {/*    </DropdownMenuItem>*/}
+                                {/*</DropdownMenuGroup>*/}
+                                {/*<DropdownMenuSeparator/>*/}
+                                {/*<DropdownMenuGroup>*/}
+                                {/*    <DropdownMenuItem>*/}
+                                {/*        <BadgeCheck className="mr-2 h-4 w-4"/>*/}
+                                {/*        Account*/}
+                                {/*    </DropdownMenuItem>*/}
+                                {/*    <DropdownMenuItem>*/}
+                                {/*        <CreditCard className="mr-2 h-4 w-4"/>*/}
+                                {/*        Billing*/}
+                                {/*    </DropdownMenuItem>*/}
+                                {/*    <DropdownMenuItem>*/}
+                                {/*        <Bell className="mr-2 h-4 w-4"/>*/}
+                                {/*        Notifications*/}
+                                {/*    </DropdownMenuItem>*/}
+                                {/*</DropdownMenuGroup>*/}
                                 <DropdownMenuSeparator/>
                                 <DropdownMenuItem>
                                     <Link href={'/logout'} className="flex items-center gap-2">
