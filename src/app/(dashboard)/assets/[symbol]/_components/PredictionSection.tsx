@@ -87,7 +87,7 @@ const PredictionSection = ({ticker, asset, isAdmin, inDb}: PredictionSectionProp
         };
 
         fetchData().then();
-    }, [ticker, inDb, fromDate, toDate]);
+    }, [ticker, inDb, fromDate, toDate, formatDate]);
 
     const handleExport = () => {
         if (predictionData) {
