@@ -201,7 +201,7 @@ export function BudgetReports({userId}: BudgetReportsProps) {
             }
         }
 
-        fetchData()
+        fetchData().then();
     }, [userId])
 
     const handleAddTransaction = async (e: React.FormEvent) => {

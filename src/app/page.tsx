@@ -38,8 +38,8 @@ const GroupSection = ({number, title, technologies, description}: {
         <div className="flex flex-wrap gap-2 mb-4">
             {technologies.map((tech, idx) => (
                 <span key={idx} className="text-xs px-2 py-1 rounded-full bg-secondary/20 text-secondary-foreground">
-          {tech}
-        </span>
+                    {tech}
+                </span>
             ))}
         </div>
         <p className="text-muted-foreground text-sm">{description}</p>
@@ -59,12 +59,6 @@ export default function Home() {
                         <Wallet className="h-6 w-6 text-primary"/>
                         <span className="font-bold text-xl">IntelliFinance</span>
                     </Link>
-                    <nav className="hidden md:flex items-center gap-6">
-                        <a href="#" className="text-sm font-medium hover:text-primary transition-colors">Features</a>
-                        <a href="#" className="text-sm font-medium hover:text-primary transition-colors">Groups</a>
-                        <a href="#" className="text-sm font-medium hover:text-primary transition-colors">Technology</a>
-                        <a href="#" className="text-sm font-medium hover:text-primary transition-colors">About</a>
-                    </nav>
                     <div className="flex items-center gap-4">
                         <ModeToggle/>
                         <div className="hidden md:flex gap-2">
@@ -207,9 +201,9 @@ export default function Home() {
                     />
                     <GroupSection
                         number="40"
-                        title="Financial Risk & Compliance"
-                        technologies={["Fairness-aware AI", "Explainability", "PostgreSQL"]}
-                        description="Monitoring and mitigation of financial risks with transparent AI decision-making processes."
+                        title="Financial Risk & And AI Explainability"
+                        technologies={["Gemini API", "yfinance", "palmyrah fin"]}
+                        description="Monitoring financial risks per stock symbols and provide the customer with recommendation"
                     />
                 </div>
             </section>
@@ -243,7 +237,6 @@ export default function Home() {
                         <div className="flex gap-6">
                             <a href="#" className="text-sm text-muted-foreground hover:text-primary">Privacy Policy</a>
                             <a href="#" className="text-sm text-muted-foreground hover:text-primary">Terms of Use</a>
-                            <a href="#" className="text-sm text-muted-foreground hover:text-primary">Contact</a>
                         </div>
                     </div>
                     <div className="mt-8 pt-6 border-t text-center text-sm text-muted-foreground">

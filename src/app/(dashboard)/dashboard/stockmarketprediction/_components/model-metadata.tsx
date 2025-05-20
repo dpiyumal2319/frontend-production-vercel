@@ -1,5 +1,4 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
 import { Separator } from "@/components/ui/separator"
 import { format } from "date-fns"
 import {ModelMetadataType} from "@/lib/types/stock_prediction";
@@ -55,7 +54,7 @@ export default function ModelMetadata({ metadata }: ModelMetadataProps) {
       <Card>
         <CardHeader>
           <CardTitle>Model Performance</CardTitle>
-          <CardDescription>Accuracy and error metrics</CardDescription>
+          <CardDescription>error metrics</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* <div>
@@ -70,18 +69,8 @@ export default function ModelMetadata({ metadata }: ModelMetadataProps) {
               <p className="text-sm font-medium">Mean Absolute Error (MAE)</p>
               <p className="text-sm font-medium">{metadata.maeScore.toFixed(5)}</p>
             </div>
-            <Progress value={100 - metadata.maeScore * 10} className="h-2" />
+            {/* <Progress value={100 - metadata.maeScore * 10} className="h-2" /> */}
             <p className="text-xs text-muted-foreground mt-1">Average error in price predictions</p>
-          </div>
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-sm font-medium">R² Score</p>
-              {/* <p className="text-sm font-medium">{metadata.r2Score.toFixed(2)}</p> */}
-            </div>
-            {/* <Progress value={metadata.r2Score * 100} className="h-2" /> */}
-            <p className="text-xs text-muted-foreground mt-1">
-              Proportion of variance explained by the model (1.0 is perfect)
-            </p>
           </div>
         </CardContent>
       </Card>

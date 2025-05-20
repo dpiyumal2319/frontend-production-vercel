@@ -57,7 +57,9 @@ export default function StockPredictionChart({historicalData, predictionData}: S
                         if (value === null) return ["-", name]
                         return name === "Price" || name === "Predicted" ? [`$${value}`, name] : [`$${value}`, name]
                     }}
-                    labelFormatter={(label) => `Date: ${label}`}
+                    labelFormatter={(label) => (
+                        <span style={{ color: "blue" }}>{`Date: ${label}`}</span>
+                    )}
                 />
                 <Legend/>
                 <Line
