@@ -37,7 +37,7 @@ const Page = async ({
                 </h1>
                 {!isAdmin && (<RiskWatchListBadge/>)}
             </div>
-            <div className="flex flex-col gap-4 w-full">
+            <div className="flex flex-col gap-4 w-full min-h-[500px]">
                 <Suspense key={page} fallback={<AssetsTableSkeleton/>}>
                     <AssetsTable page={page} result_per_page={result_per_page}/>
                 </Suspense>

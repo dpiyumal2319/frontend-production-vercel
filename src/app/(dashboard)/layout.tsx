@@ -49,13 +49,13 @@ export default function DashboardLayout({children}: { children: React.ReactNode 
                     </header>
                     <div className="flex-1 overflow-auto">
                         {children}
-                        {/*<footer>*/}
-                        {/*    <Separator/>*/}
-                        {/*    <div className="flex items-center justify-center px-4 py-6 text-sm text-muted-foreground">*/}
-                        {/*        <span>© 2024 - Sem 4 Group J</span>*/}
-                        {/*    </div>*/}
-                        {/*</footer>*/}
                         <AIChat/>
+                        <footer>
+                            <Separator/>
+                            <div className="flex items-center justify-center px-4 py-6 text-sm text-muted-foreground">
+                                <span>© 2025 - Sem 4 Group J</span>
+                            </div>
+                        </footer>
                     </div>
                 </SidebarInset>
             </SidebarProvider>
