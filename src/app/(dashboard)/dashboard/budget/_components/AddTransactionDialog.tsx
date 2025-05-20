@@ -68,6 +68,8 @@ export function AddTransactionDialog({userId, onTransactionAdded}: AddTransactio
 
             // Step 2: Create transaction
             await createTransaction(transactionToCreate);
+            localStorage.removeItem('report');
+            localStorage.removeItem('prediction');
 
             // Step 3: Refetch balance
             onTransactionAdded(); // Use await if refetchBalance returns a promise and you need to wait

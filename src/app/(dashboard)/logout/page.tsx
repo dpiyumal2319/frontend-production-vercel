@@ -8,6 +8,8 @@ import {Loader2} from "lucide-react";
 
 export default function LogoutPage() {
     useEffect(() => {
+        localStorage.clear(); // Clear local storage
+
         // Wait 1 second and then call the logout function
         const timer = setTimeout(() => {
             logout().then(() => console.log("Logged out successfully"));
