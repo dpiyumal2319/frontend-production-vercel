@@ -134,21 +134,27 @@ const AnomalySection = ({
                         </CardHeader>
                     </motion.div>
                     <CardContent>
+                        {/* Move the graph outside the flags check so it shows regardless */}
+                        {anomalyRisk?.historical_data && anomalyRisk.historical_data.length > 0 && (
+                            <motion.div
+                                initial={{opacity: 0}}
+                                animate={{opacity: 1}}
+                                transition={{delay: 0.3, duration: 0.5}}
+                            >
+                                <AnomalyGraph
+                                    historicalData={anomalyRisk.historical_data}
+                                    flags={anomalyRisk.flags || []}
+                                />
+                            </motion.div>
+                        )}
+
                         {anomalyRisk.flags && anomalyRisk.flags.length > 0 ? (
                             <motion.div
                                 initial={{opacity: 0}}
                                 animate={{opacity: 1}}
                                 transition={{delay: 0.3, duration: 0.5}}
                             >
-                                {/* Add the graph BEFORE the table for a better visual hierarchy */}
-                                {anomalyRisk?.historical_data && anomalyRisk.historical_data.length > 0 && (
-                                    <AnomalyGraph
-                                        historicalData={anomalyRisk.historical_data}
-                                        flags={anomalyRisk.flags}
-                                    />
-                                )}
                                 <div className="mt-6">
-
                                     <Table>
                                         <TableHeader>
                                             <TableRow>
@@ -237,3 +243,4 @@ const AnomalySection = ({
 };
 
 export default AnomalySection;
+
