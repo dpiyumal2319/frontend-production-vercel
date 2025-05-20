@@ -89,11 +89,11 @@ export function BudgetReports({userId}: BudgetReportsProps) {
                         [type]: Math.max(prev[type] - 1, 1)
                     }))}
                     disabled={currentPage === 1}
-                    className="bg-gray-700 text-white border-gray-600"
+                    className="bg-gray-700  border-gray-600"
                 >
                     Previous
                 </Button>
-                <span className="text-white">
+                <span className="">
                     Page {currentPage} of {totalPages}
                 </span>
                 <Button
@@ -103,7 +103,7 @@ export function BudgetReports({userId}: BudgetReportsProps) {
                         [type]: Math.min(prev[type] + 1, totalPages)
                     }))}
                     disabled={currentPage === totalPages}
-                    className="bg-gray-700 text-white border-gray-600"
+                    className="bg-gray-700  border-gray-600"
                 >
                     Next
                 </Button>
@@ -289,36 +289,36 @@ export function BudgetReports({userId}: BudgetReportsProps) {
     }
 
     return (
-        <div className="space-y-6 p-8">
+        <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <Card>
                     <CardHeader className="pb-2">
-                        <CardTitle className="text-lg text-white">Total Expenses</CardTitle>
-                        <CardDescription className="text-gray-300">Current month</CardDescription>
+                        <CardTitle>Total Expenses</CardTitle>
+                        <CardDescription>Current month</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-3xl font-bold text-white">${totalExpenses.toFixed(2)}</div>
+                        <div className="text-3xl font-bold ">${totalExpenses.toFixed(2)}</div>
                     </CardContent>
                 </Card>
 
                 <Card>
                     <CardHeader className="pb-2">
-                        <CardTitle className="text-lg text-white">Net Savings</CardTitle>
-                        <CardDescription className="text-gray-300">Current month</CardDescription>
+                        <CardTitle>Net Savings</CardTitle>
+                        <CardDescription>Current month</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-3xl font-bold text-white">${netSavings.toFixed(2)}</div>
+                        <div className="text-3xl font-bold ">${netSavings.toFixed(2)}</div>
                         <div className="text-sm text-amber-400 mt-1">{savingsPercentage}% of income saved</div>
                     </CardContent>
                 </Card>
 
                 <Card>
                     <CardHeader className="pb-2">
-                        <CardTitle className="text-lg text-white">Largest Expense</CardTitle>
-                        <CardDescription className="text-gray-300">Current month</CardDescription>
+                        <CardTitle>Largest Expense</CardTitle>
+                        <CardDescription>Current month</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-3xl font-bold text-white">{largestCategory}</div>
+                        <div className="text-3xl font-bold ">{largestCategory}</div>
                         <div
                             className="text-sm text-gray-300 mt-1">${typeof largestAmount === 'number' ? largestAmount.toFixed(2) : 0}</div>
                     </CardContent>
@@ -329,7 +329,7 @@ export function BudgetReports({userId}: BudgetReportsProps) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <Card>
                         <CardHeader>
-                            <CardTitle className="text-white">Recommendations</CardTitle>
+                            <CardTitle className="">Recommendations</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <ul className="space-y-2 text-gray-300">
@@ -345,7 +345,7 @@ export function BudgetReports({userId}: BudgetReportsProps) {
 
                     <Card>
                         <CardHeader>
-                            <CardTitle className="text-white">Alerts</CardTitle>
+                            <CardTitle className="">Alerts</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <ul className="space-y-2 text-red-300">
@@ -364,23 +364,23 @@ export function BudgetReports({userId}: BudgetReportsProps) {
             <Tabs defaultValue="all">
                 <TabsList className="mb-4 bg-gray-700 p-1 rounded-lg">
                     <TabsTrigger value="all"
-                                 className="text-gray-200 data-[state=active]:bg-blue-600 data-[state=active]:text-white">
+                                 className="text-gray-200 data-[state=active]:bg-blue-600 data-[state=active]:">
                         All Transactions
                     </TabsTrigger>
                     <TabsTrigger value="expenses"
-                                 className="text-gray-200 data-[state=active]:bg-blue-600 data-[state=active]:text-white">
+                                 className="text-gray-200 data-[state=active]:bg-blue-600 data-[state=active]:">
                         Expense List
                     </TabsTrigger>
                     <TabsTrigger value="income"
-                                 className="text-gray-200 data-[state=active]:bg-blue-600 data-[state=active]:text-white">
+                                 className="text-gray-200 data-[state=active]:bg-blue-600 data-[state=active]:">
                         Income List
                     </TabsTrigger>
                     <TabsTrigger value="chart"
-                                 className="text-gray-200 data-[state=active]:bg-blue-600 data-[state=active]:text-white">
+                                 className="text-gray-200 data-[state=active]:bg-blue-600 data-[state=active]:">
                         Charts
                     </TabsTrigger>
                     <TabsTrigger value="add"
-                                 className="text-gray-200 data-[state=active]:bg-blue-600 data-[state=active]:text-white">
+                                 className="text-gray-200 data-[state=active]:bg-blue-600 data-[state=active]:">
                         Add Transactions
                     </TabsTrigger>
                 </TabsList>
@@ -388,15 +388,14 @@ export function BudgetReports({userId}: BudgetReportsProps) {
                 <TabsContent value="all">
                     <div className="grid gap-4">
                         {currentTransactions.all.map(txn => (
-                            <Card key={txn.id}
-                                  className="bg-gray-800 border-gray-700 hover:border-gray-600 transition-colors duration-200">
+                            <Card key={txn.id}>
                                 <CardHeader className="pb-3">
                                     <div className="flex justify-between items-start">
                                         <div>
-                                            <CardTitle className="text-white text-lg font-semibold">
+                                            <CardTitle className=" text-lg font-semibold">
                                                 {txn.reason}
                                             </CardTitle>
-                                            <CardDescription className="text-gray-400 mt-1">
+                                            <CardDescription className="mt-1">
                                                 {txn.category}
                                             </CardDescription>
                                         </div>
@@ -444,11 +443,11 @@ export function BudgetReports({userId}: BudgetReportsProps) {
                     <div className="grid gap-4">
                         {currentTransactions.expenses.map(txn => (
                             <Card key={txn.id}
-                                  className="bg-gray-800 border-gray-700 hover:border-gray-600 transition-colors duration-200">
+                            >
                                 <CardHeader className="pb-3">
                                     <div className="flex justify-between items-start">
                                         <div>
-                                            <CardTitle className="text-white text-lg font-semibold">
+                                            <CardTitle className=" text-lg font-semibold">
                                                 {txn.reason}
                                             </CardTitle>
                                             <CardDescription className="text-gray-400 mt-1">
@@ -499,11 +498,11 @@ export function BudgetReports({userId}: BudgetReportsProps) {
                     <div className="grid gap-4">
                         {currentTransactions.income.map(txn => (
                             <Card key={txn.id}
-                                  className="bg-gray-800 border-gray-700 hover:border-gray-600 transition-colors duration-200">
+                            >
                                 <CardHeader className="pb-3">
                                     <div className="flex justify-between items-start">
                                         <div>
-                                            <CardTitle className="text-white text-lg font-semibold">
+                                            <CardTitle className=" text-lg font-semibold">
                                                 {txn.reason}
                                             </CardTitle>
                                             <CardDescription className="text-gray-400 mt-1">
@@ -553,8 +552,8 @@ export function BudgetReports({userId}: BudgetReportsProps) {
                 <TabsContent value="chart">
                     <Card>
                         <CardHeader>
-                            <CardTitle className="text-lg text-white">Expense Distribution</CardTitle>
-                            <CardDescription className="text-gray-300">Breakdown by category</CardDescription>
+                            <CardTitle>Expense Distribution</CardTitle>
+                            <CardDescription>Breakdown by category</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <div className="h-96">
@@ -577,8 +576,8 @@ export function BudgetReports({userId}: BudgetReportsProps) {
                     </Card>
                     <Card>
                         <CardHeader>
-                            <CardTitle className="text-lg text-white">Income Distribution</CardTitle>
-                            <CardDescription className="text-gray-300">Breakdown by category</CardDescription>
+                            <CardTitle>Income Distribution</CardTitle>
+                            <CardDescription>Breakdown by category</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <div className="h-96">
@@ -605,12 +604,12 @@ export function BudgetReports({userId}: BudgetReportsProps) {
                     <form onSubmit={handleAddTransaction} className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <Label className="text-white">Date</Label>
+                                <Label className="">Date</Label>
                                 <Input type="date" value={newTransaction.date}
                                        onChange={e => setNewTransaction({...newTransaction, date: e.target.value})}/>
                             </div>
                             <div>
-                                <Label className="text-white">Amount</Label>
+                                <Label className="">Amount</Label>
                                 <Input type="number" min="0" step="0.01" value={newTransaction.amount}
                                        onChange={e => setNewTransaction({
                                            ...newTransaction,
@@ -618,16 +617,16 @@ export function BudgetReports({userId}: BudgetReportsProps) {
                                        })}/>
                             </div>
                             {/* <div>
-                <Label className="text-white">Category</Label>
+                <Label className="">Category</Label>
                 <Input value={newTransaction.category} onChange={e => setNewTransaction({ ...newTransaction, category: e.target.value })} />
               </div> */}
                             <div>
-                                <Label className="text-white">Description</Label>
+                                <Label className="">Description</Label>
                                 <Input value={newTransaction.reason}
                                        onChange={e => setNewTransaction({...newTransaction, reason: e.target.value})}/>
                             </div>
                             <div>
-                                <Label className="text-white">Type</Label>
+                                <Label className="">Type</Label>
                                 <Select
                                     value={newTransaction.type}
                                     onValueChange={(value) => setNewTransaction({
