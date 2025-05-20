@@ -20,6 +20,7 @@ import RiskAnalysisSection from "@/app/(dashboard)/assets/[symbol]/_components/R
 import {AssetStatus} from "@/app/(dashboard)/assets/[symbol]/_utils/definitions";
 import {getCurrentUser} from "@/actions/auth";
 import RiskWatchListBadge from "@/app/(dashboard)/_components/RiskWatchListBadge";
+import PredictionSection from "@/app/(dashboard)/assets/[symbol]/_components/PredictionSection";
 
 // Main page component
 const StockDetailPage = async ({params}: { params: Promise<{ symbol: string }> }) => {
@@ -155,6 +156,8 @@ const StockDetailPage = async ({params}: { params: Promise<{ symbol: string }> }
             </section>
             <Separator/>
             <RiskAnalysisSection ticker={asset.ticker} inDb={asset.db?.in_db || false} asset={asset} isAdmin={isAdmin}/>
+            <Separator/>
+            <PredictionSection asset={asset} inDb={asset.db?.in_db || false} isAdmin={isAdmin} ticker={asset.ticker}/>
         </div>
     );
 };
