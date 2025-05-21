@@ -235,8 +235,10 @@ export default function Home() {
                             <span className="font-bold text-xl">IntelliFinance</span>
                         </Link>
                         <div className="flex gap-6">
-                            <a href="#" className="text-sm text-muted-foreground hover:text-primary">Privacy Policy</a>
-                            <a href="#" className="text-sm text-muted-foreground hover:text-primary">Terms of Use</a>
+                            <a href="https://drive.google.com/file/d/1ilXlM7wlYHSlhlOR7h787xepN_y4uhEu/view?usp=sharing"
+                               className="text-sm text-muted-foreground hover:text-primary">Privacy Policy</a>
+                            <a href="https://drive.google.com/file/d/1BB_hdko_M7dNI7gjkC9YICgRLn3H54wy/view?usp=sharing"
+                               className="text-sm text-muted-foreground hover:text-primary">Terms of Use</a>
                         </div>
                     </div>
                     <div className="mt-8 pt-6 border-t text-center text-sm text-muted-foreground">

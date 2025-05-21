@@ -13,6 +13,7 @@ import {
 import AxiosInstance from "@/lib/client-fetcher";
 import { getCurrentUser } from "@/actions/auth";
 import { User } from "@/lib/types/user";
+import { Loader2 } from "lucide-react";
 
 type Option = {
   label: string;
@@ -106,6 +107,7 @@ export default function RiskAssessment() {
     Array(questions.length).fill(null)
   );
   const [completed, setCompleted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleOptionClick = (index: number) => {
     const newAnswers = [...answers];
@@ -171,6 +173,7 @@ export default function RiskAssessment() {
   }, []);
 
   const handleCompleteQuiz = async () => {
+    setIsLoading(true);
     if (!user) return;
     const val = totalScore;
     if (val === null || isNaN(val)) return;
@@ -193,6 +196,8 @@ export default function RiskAssessment() {
     } catch (err) {
       console.error("Failed to save risk score:", err);
       // optionally show an error toast or inline message
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -385,12 +390,20 @@ export default function RiskAssessment() {
                     Start Over
                   </button>
                   <button
-                    className="flex-1 py-3 bg-okay hover:bg-okay/80 text-white font-medium rounded-lg transition-colors"
+                    className="flex flex-1 items-center justify-center py-3 bg-okay hover:bg-okay/80 text-white font-medium rounded-lg transition-colors"
                     onClick={() => {
                       handleCompleteQuiz();
                     }}
+                    disabled={isLoading}
                   >
-                    Submit
+                    {isLoading ? (
+                      <Loader2
+                        className="h-5 w-5 animate-spin"
+                        aria-label="Loading…"
+                      />
+                    ) : (
+                      "Submit"
+                    )}
                   </button>
                 </div>
               </div>

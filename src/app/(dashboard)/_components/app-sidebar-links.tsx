@@ -10,7 +10,7 @@ import {
     Earth,
     PieChart,
     Users,
-    ChartColumnIncreasing
+    ChartColumnIncreasing, MessageCircleQuestion
 } from "lucide-react";
 
 const userSidebar: SidebarData = {
@@ -55,7 +55,14 @@ const userSidebar: SidebarData = {
             title: "StockMarket Prediction",
             url: "/dashboard/stockmarketprediction",
             icon: ChartColumnIncreasing
-        }]
+        }],
+    guides: [
+        {
+            name: "User Manual",
+            url: "/manual",
+            icon: MessageCircleQuestion,
+        },
+    ],
 }
 
 const adminSidebar: SidebarData = {
@@ -103,6 +110,11 @@ const adminSidebar: SidebarData = {
         }
     ],
     guides: [
+        {
+            name: "User Manual",
+            url: "/manual",
+            icon: MessageCircleQuestion,
+        },
         {
             name: "Documentation",
             url: "/docs",
